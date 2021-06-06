@@ -28,6 +28,14 @@ class App extends Component {
     console.log('[App.js] componentDidMount rendering');
   }
 
+  componentDidUpdate(){
+    console.log('[App.js] componenetDidUpdate');
+  }
+
+  shouldComponentUpdate(nextProps,nextState){
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
+  }
 
   switchnameHandler=(newName)=>{
     console.log('CLicked!');
