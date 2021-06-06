@@ -3,15 +3,31 @@ import './App.css';
 import Person from './Person/Person';
 
 class App extends Component {
-  state={
-    persons:[
-      {name:'Max', age:28},
-      {name:'Manu', age:29},
-      {name:'Stephanie',age:26}
-    ],
-    otherstate:'Voila',
-    showPersons:false
+
+  constructor(props){
+    super(props);
+    console.log('[App.js] Constructor');
+    this.state={
+      persons:[
+        {index:0, name:'Max', age:28},
+        {index:1, name:'Manu', age:29},
+        {index:2, name:'Stephanie',age:26}
+      ],
+      otherstate:'Voila',
+      showPersons:false
+    }
   }
+
+
+  static getDerivedStateFromProps(props,state){
+    console.log('[App.js] getDerivedStateFromProps',props);
+    return state;
+  }
+
+  componentDidMount(){
+    console.log('[App.js] componentDidMount rendering');
+  }
+
 
   switchnameHandler=(newName)=>{
     console.log('CLicked!');
@@ -24,14 +40,26 @@ class App extends Component {
     })
   }
 
+  deletePersonHandler=(personIndex)=>{
+    const persons=[...this.state.persons];
+    persons.splice(personIndex,1);
+    this.setState({persons: persons})
+  }
 
-  nameChangedHandler=(event)=>{
+  nameChangedHandler=(event,index)=>{
+    const personIndex=this.state.persons.findIndex(p=>{
+      return p.index==index;
+    })
+
+    const person={
+      ...this.state.persons[personIndex]
+    }
+    person.name=event.target.value;
+
+    const persons=[...this.state.persons];
+    persons[personIndex]=person;
     this.setState({
-      persons:[
-        {name:'Yogesh',age:21},
-        {name:event.target.value, age:29},
-        {name:'Stephanie',age:26}
-      ]
+      persons:persons
     })
   }
 
@@ -42,17 +70,20 @@ class App extends Component {
   }
 
   render() {
+    console.log('[App.js] render');
     let persons=null;
 
     if(this.state.showPersons){
       persons=(
         <div>
-          {this.state.persons.map(person=>{
+          {this.state.persons.map((person,index)=>{
             return (
               <Person
               name={person.name}
               age={person.age}
-              changed={this.nameChangedHandler}/>
+              click={()=>this.deletePersonHandler(index)}
+              changed={(event)=>this.nameChangedHandler(event,index)}
+              key={index}/>
             )
           })}
       </div> 
